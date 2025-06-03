@@ -142,7 +142,6 @@
     <ClInclude Include="headers\EventSystem.h" />
     <ClInclude Include="headers\InputManager.h" />
     <ClInclude Include="headers\Material.h" />
-    <ClInclude Include="headers\Mesh.h" />
     <ClInclude Include="headers\Scene.h" />
     <ClInclude Include="headers\Shader.h" />
     <ClInclude Include="headers\SkinnedMesh.h" />

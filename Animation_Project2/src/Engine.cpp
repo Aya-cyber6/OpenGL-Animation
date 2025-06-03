@@ -13,7 +13,7 @@
 
 Engine::Engine() {
 
-    GLclampf Red = 0.0f, Green = 0.0f, Blue = 0.0f, Alpha = 0.0f;
+    GLclampf Red = 0.5f, Green = 0.3f, Blue = 0.6f, Alpha = 0.0f;
     glClearColor(Red, Green, Blue, Alpha);
 
     glEnable(GL_CULL_FACE);
@@ -62,17 +62,16 @@ Engine::~Engine()
 }
 
 
-bool Engine::Init(GLFWwindow* window) {
-    m_Window = window;
+bool Engine::Init() {
 
-    glm::vec3 CameraPos(0.0f, 5.0f, -8.0f);
-    glm::vec3 CameraTarget(0.0f, -0.5f, 1.0f);
+    glm::vec3 CameraPos(0.0f, 0.0f, 5.0f);
+    glm::vec3 CameraTarget(0.0f, 0.0f, 0.0f);
     glm::vec3 CameraUp(0.0f, 1.0f, 0.0f);
 
     pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT, CameraPos, CameraTarget, CameraUp);
     pMesh1 = new SkinnedMesh();
 
-    if (!pMesh1->LoadMesh("res/cube/cube.obj")) {
+    if (!pMesh1->LoadMesh("res/donut/donut.obj")) {
         printf("Mesh load failedddddddddd\n");
         return false;
     }
@@ -101,29 +100,11 @@ bool Engine::Init(GLFWwindow* window) {
 
 void Engine::RenderSceneCB()
 {
-
-    persProjInfo.FOV = 60.0f;         // degrees
-    persProjInfo.Width = 1280.0f;     // or get from actual window size
-    persProjInfo.Height = 720.0f;     // or get from actual window size
-    persProjInfo.zNear = 0.1f;
-    persProjInfo.zFar = 100.0f;
-
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     pGameCamera->OnRender();
 
-    // Build world matrix with GLM:
-    glm::mat4 World = glm::mat4(1.0f);
+    glm::mat4 World = glm::mat4(1.0f);  // No translate, no rotate, no scale
 
-    // Apply transformations in order: Scale -> Rotate -> Translate
-    World = glm::translate(World, glm::vec3(0.0f, 0.0f, -10.0f));
-
-    // GLM rotates around axis with radians
-    World = glm::rotate(World, glm::radians(90.0f), glm::vec3(1, 0, 0)); // rotate X by 90 deg
-    World = glm::rotate(World, glm::radians(180.0f), glm::vec3(0, 1, 0)); // rotate Y by 180 deg
-    // No rotation around Z, so skip or add if needed
-
-    World = glm::scale(World, glm::vec3(0.1f));
 
     // Get View and Projection from your camera and projection info (assuming compatible types)
     glm::mat4 View = pGameCamera->GetMatrix();
@@ -195,4 +176,50 @@ void Engine::RenderSceneCB()
     pMesh1->Render();
 
 
+}
+
+
+#define ATTEN_STEP 0.01f
+
+#define ANGLE_STEP 1.0f
+
+
+void Engine::ProcessInput(GLFWwindow* window, float deltaTime) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true); // Close window on ESC
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        ProcessKey(GLFW_KEY_W, GLFW_PRESS, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        ProcessKey(GLFW_KEY_S, GLFW_PRESS, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        ProcessKey(GLFW_KEY_A, GLFW_PRESS, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        ProcessKey(GLFW_KEY_D, GLFW_PRESS, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        ProcessKey(GLFW_KEY_SPACE, GLFW_PRESS, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        ProcessKey(GLFW_KEY_LEFT_SHIFT, GLFW_PRESS, deltaTime);
+}
+
+
+void Engine::ProcessKey(int key, int action, float deltaTime) {
+        //outside switch
+        if (pGameCamera) {
+            pGameCamera->OnKeyboard(key, deltaTime);
+        }
+    }
+
+void Engine::ProcessMouse(double xpos, double ypos) {
+    if (pGameCamera) {
+        pGameCamera->OnMouse(static_cast<int>(xpos), static_cast<int>(ypos));
+    }
+}
+
+
+void Engine::MouseCallback(GLFWwindow* window, double xpos, double ypos) {
+    Engine* engine = static_cast<Engine*>(glfwGetWindowUserPointer(window));
+    if (engine) {
+        engine->ProcessMouse(xpos, ypos);
+    }
 }

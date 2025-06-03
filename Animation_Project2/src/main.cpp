@@ -18,8 +18,12 @@ bool IsGLVersionHigher(int major, int minor)
     return false;
 }
 
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
 
 int main() {
+
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
         return -1;
@@ -34,37 +38,41 @@ int main() {
         glfwTerminate();
         return -1;
     }
-
     glfwMakeContextCurrent(window);
 
 
-    // ✅ Initialize GLAD
+    // Initialize GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to initialize GLAD\n";
         return -1;
     }
 
-    glfwSwapInterval(1); // Enable V-Sync
+    Engine* engine = new Engine();
 
-    Engine* engine = NULL;
-
-    engine = new Engine();
-
-    if (!engine->Init(window)) {
+    if (!engine->Init()) {
         std::cerr << "Engine initialization failed.\n";
         return -1;
     }
 
+    glfwSetWindowUserPointer(window, engine);
+    glfwSetCursorPosCallback(window, Engine::MouseCallback);
+
+
     while (!glfwWindowShouldClose(window)) {
-        float currentTime = static_cast<float>(glfwGetTime());
+
+        float currentFrame = static_cast<float>(glfwGetTime());
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+
+        engine->RenderSceneCB();
+        engine->ProcessInput(window, deltaTime);
 
         //engine.Update(currentTime);
         //engine.Render();
-        engine->RenderSceneCB();
-
-
         glfwSwapBuffers(window);
         glfwPollEvents();
+
     }
 
     glfwDestroyWindow(window);

@@ -1,10 +1,9 @@
-#ifndef ENGINE_H
+﻿#ifndef ENGINE_H
 #define ENGINE_H
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "..//headers/Camera.h"
-#include "..//headers/Mesh.h"
 #include "..//headers/SkinnedMesh.h"
 #include "..//headers/SkinningTechnique.h"
 #include <chrono>
@@ -16,12 +15,22 @@ public:
     Engine();
     ~Engine();
 
-    bool Init(GLFWwindow* window);
+    bool Init();
 
     void RenderSceneCB();
-    void KeyboardCB(unsigned char key, int mouse_x, int mouse_y);
-    void SpecialKeyboardCB(int key, int mouse_x, int mouse_y);
-    void PassiveMouseCB(int x, int y);
+
+    // 🔑 Add these static methods:
+    static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+    void ProcessInput(GLFWwindow* window, float deltaTime);
+
+    struct PersProjInfo
+    {
+        float FOV = 0.0f;
+        float Width = 0.0f;
+        float Height = 0.0f;
+        float zNear = 0.0f;
+        float zFar = 0.0f;
+    };
 
 private:
     GLuint WVPLocation;
@@ -35,9 +44,14 @@ private:
     long long StartTime = 0;
     int DisplayBoneIndex = 0;
 
-    int WINDOW_WIDTH;
-    int WINDOW_HEIGHT;
+    int WINDOW_WIDTH = 1280;
+    int WINDOW_HEIGHT = 720;
     GLFWwindow* m_Window;
+
+
+    void ProcessKey(int key, int action, float deltaTime);
+    void ProcessMouse(double xpos, double ypos);
+
 };
 
 #endif // ENGINE_H

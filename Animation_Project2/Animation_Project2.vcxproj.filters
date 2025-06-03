@@ -33,9 +33,6 @@
     <ClInclude Include="headers\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="headers\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>

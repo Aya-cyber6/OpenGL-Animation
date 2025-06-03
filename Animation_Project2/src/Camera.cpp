@@ -166,7 +166,7 @@ glm::mat4 Camera::GetMatrix() const
 {
     return glm::lookAt(
         m_position,          // Camera position
-        m_position + m_front, // Target position (where camera looks at)
+        m_target, // Target position (where camera looks at)
         m_up                 // Up vector
     );
 }
