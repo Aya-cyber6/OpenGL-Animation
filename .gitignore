@@ -1,0 +1,27 @@
+# Ignore Visual Studio temporary files
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+*.ipch/
+
+# Ignore build output
+x64/
+Debug/
+Release/
+*.obj
+*.exe
+*.log
+
+# Ignore CMake if used
+CMakeFiles/
+CMakeCache.txt
+
+# Ignore other junk
+*.tlog
+*.idb
+*.pdb
+*.ilk
+*.sdf
+*.opensdf
